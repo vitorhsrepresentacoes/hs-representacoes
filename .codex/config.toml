@@ -1,0 +1,11 @@
+# Codex project-only configuration. It does not change ~/.codex/config.toml.
+# On first use, run `codex mcp login <name>` and authenticate the CLIENT account.
+
+[mcp_servers.github]
+url = "https://api.githubcopilot.com/mcp/"
+
+[mcp_servers.vercel]
+url = "https://mcp.vercel.com"
+
+[mcp_servers.supabase]
+url = "https://mcp.supabase.com/mcp"
