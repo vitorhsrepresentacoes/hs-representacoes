@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { submitLead } from "@/lib/lead-service";
+import { analyzeLeadWithHermesOnly, submitLead } from "@/lib/lead-service";
 import type { HermesAnalysis, Lead, LeadInput } from "@/lib/types";
 import type { LeadRepository } from "@/lib/leads-repository";
 
@@ -53,5 +53,14 @@ describe("submitLead", () => {
     const result = await submitLead(input, { repository: repo, analyze: vi.fn(async () => analysis), syncGhl: vi.fn(async () => { throw new Error("GHL indisponível"); }) });
     expect(result.analysisStatus).toBe("completed");
     expect(repo.setGhlFailed).toHaveBeenCalledOnce();
+  });
+
+  it("can analyze an existing lead without sending it to GHL", async () => {
+    const repo = repository();
+    const syncGhl = vi.fn();
+    await analyzeLeadWithHermesOnly("lead-1", { repository: repo, analyze: vi.fn(async () => analysis), syncGhl });
+    expect(repo.get).toHaveBeenCalledWith("lead-1");
+    expect(repo.setAnalysis).toHaveBeenCalledWith("lead-1", analysis);
+    expect(syncGhl).not.toHaveBeenCalled();
   });
 });

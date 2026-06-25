@@ -45,3 +45,18 @@ export async function retryLeadAnalysis(id: string, dependencies = defaultDepend
     await dependencies.repository.setGhlFailed(id, error instanceof Error ? error.message : "Falha desconhecida no GHL.");
   }
 }
+
+/** Runs only the Hermes analysis. CRM synchronization is deliberately skipped. */
+export async function analyzeLeadWithHermesOnly(id: string, dependencies = defaultDependencies) {
+  const lead = await dependencies.repository.get(id);
+  if (!lead) throw new Error("Lead não encontrado.");
+
+  try {
+    const analysis = await dependencies.analyze(lead);
+    return await dependencies.repository.setAnalysis(lead.id, analysis);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Falha desconhecida no Hermes.";
+    await dependencies.repository.setReviewRequired(id, message);
+    throw error;
+  }
+}
