@@ -5,6 +5,8 @@ import { chatWithHermes } from "@/lib/hermes";
 
 const bodySchema = z.object({ message: z.string().trim().min(3, "Escreva uma busca.").max(500) });
 
+export const maxDuration = 60;
+
 export async function POST(request: Request) {
   if (!(await getAdminSession())) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
   try {

@@ -8,6 +8,13 @@ type HermesResponse = {
   }>;
 };
 
+const DEFAULT_HERMES_TIMEOUT_MS = 55_000;
+
+function hermesTimeoutMs() {
+  const configured = Number(process.env.HERMES_TIMEOUT_MS);
+  return Number.isFinite(configured) && configured > 0 ? configured : DEFAULT_HERMES_TIMEOUT_MS;
+}
+
 function requireHermesConfig() {
   const baseUrl = process.env.HERMES_BASE_URL?.replace(/\/$/, "");
   const token = process.env.HERMES_API_TOKEN;
@@ -57,7 +64,7 @@ export async function analyzeLeadWithHermes(lead: Lead): Promise<HermesAnalysis>
         prazo: lead.timeline,
       }),
     }),
-    signal: AbortSignal.timeout(25_000),
+    signal: AbortSignal.timeout(hermesTimeoutMs()),
   });
 
   if (response.redirected || !response.headers.get("content-type")?.includes("application/json")) {
@@ -87,7 +94,7 @@ export async function chatWithHermes(message: string) {
       ].join(" "),
       input: JSON.stringify({ pedidoDeProspeccao: message }),
     }),
-    signal: AbortSignal.timeout(25_000),
+    signal: AbortSignal.timeout(hermesTimeoutMs()),
   });
   if (response.redirected || !response.headers.get("content-type")?.includes("application/json")) {
     throw new Error("HS Agent redirecionou para login. Configure uma credencial de API válida no servidor.");
