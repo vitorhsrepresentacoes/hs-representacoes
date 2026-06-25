@@ -12,7 +12,7 @@ export default function Home() {
   return (
     <main>
       <section className="hero" id="inicio">
-        <nav className="nav container"><a className="brand" href="#inicio"><img src="/assets/hs-representacoes-logo.svg" alt="HS Representações" width={48} height={48} /><span>HS Representações</span></a><a href="#solicitar" className="nav-cta">Solicitar atendimento</a></nav>
+        <nav className="nav container"><a className="brand" href="#inicio"><img src="/assets/logo.svg" alt="HS Representações" width={48} height={48} /><span>HS Representações</span></a><a href="#solicitar" className="nav-cta">Solicitar atendimento</a></nav>
         <div className="container hero-content">
           <p className="eyebrow">CRÉDITO COM DIREÇÃO</p>
           <h1>Seu próximo passo merece <em>clareza</em>, não promessa vazia.</h1>
@@ -33,7 +33,7 @@ export default function Home() {
 
       <section className="section faq container" id="faq"><div className="section-heading"><p className="eyebrow">DÚVIDAS COMUNS</p><h2>O que você precisa saber antes de começar.</h2></div><div className="faq-list"><details><summary>A HS aprova crédito?</summary><p>Não. A HS Representações entende sua necessidade e conduz o atendimento comercial. Aprovações, taxas e condições dependem da análise das instituições parceiras.</p></details><details><summary>Preciso enviar documentos agora?</summary><p>Não. Nesta etapa, coletamos apenas informações iniciais para direcionar o atendimento. A documentação só é tratada no momento apropriado, pelo canal seguro indicado pelo especialista.</p></details><details><summary>Posso buscar uma modalidade mesmo sem saber qual escolher?</summary><p>Sim. Selecione “Ainda não sei” e conte seu objetivo. O time usará isso como ponto de partida para orientar a conversa.</p></details></div></section>
 
-      <footer><div className="container footer-content"><a className="brand" href="#inicio"><img src="/assets/hs-representacoes-logo.svg" alt="" width={36} height={36} /><span>HS Representações</span></a><p>Crédito e consórcio com atendimento humano.</p><a href="#solicitar">Solicitar atendimento</a></div></footer>
+      <footer><div className="container footer-content"><a className="brand" href="#inicio"><img src="/assets/logo.svg" alt="" width={36} height={36} /><span>HS Representações</span></a><p>Crédito e consórcio com atendimento humano.</p><a href="#solicitar">Solicitar atendimento</a></div></footer>
     </main>
   );
 }

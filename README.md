@@ -1,6 +1,6 @@
 # HS Representações
 
-Landing de captação de crédito e consórcio, com análise interna via Hermes Agent, registro comercial no GoHighLevel e painel mínimo para Gustavo e Victor.
+Landing de captação de crédito e consórcio, com análise interna via HS Agent, registro comercial no GoHighLevel e painel mínimo para Gustavo e Victor.
 
 ## Rodar localmente
 
@@ -9,7 +9,7 @@ Landing de captação de crédito e consórcio, com análise interna via Hermes 
 3. Instale dependências com `npm install`.
 4. Rode `npm run dev`.
 
-O Hermes precisa estar acessível por URL para o backend. O OAuth do Codex permanece exclusivamente no host persistente do Hermes; este projeto usa somente `HERMES_API_TOKEN` para chamar a API dele.
+O HS Agent precisa estar acessível por URL para o backend. O OAuth do Codex permanece exclusivamente no host persistente do agente; este projeto usa somente `HERMES_API_TOKEN` para chamar a API dele.
 
 ## Configuração comercial
 

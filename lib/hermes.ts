@@ -11,7 +11,7 @@ type HermesResponse = {
 function requireHermesConfig() {
   const baseUrl = process.env.HERMES_BASE_URL?.replace(/\/$/, "");
   const token = process.env.HERMES_API_TOKEN;
-  if (!baseUrl || !token) throw new Error("Integração Hermes não configurada.");
+  if (!baseUrl || !token) throw new Error("Integração HS Agent não configurada.");
   return { baseUrl, token };
 }
 
@@ -26,7 +26,7 @@ function extractText(payload: HermesResponse) {
 function extractJson(text: string) {
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i)?.[1];
   const candidate = fenced ?? text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1);
-  if (!candidate) throw new Error("Hermes não retornou análise estruturada.");
+  if (!candidate) throw new Error("HS Agent não retornou análise estruturada.");
   return JSON.parse(candidate);
 }
 
@@ -61,9 +61,9 @@ export async function analyzeLeadWithHermes(lead: Lead): Promise<HermesAnalysis>
   });
 
   if (response.redirected || !response.headers.get("content-type")?.includes("application/json")) {
-    throw new Error("Hermes redirecionou para login. Configure uma credencial de API válida no servidor Hermes.");
+    throw new Error("HS Agent redirecionou para login. Configure uma credencial de API válida no servidor.");
   }
-  if (!response.ok) throw new Error(`Hermes respondeu com status ${response.status}.`);
+  if (!response.ok) throw new Error(`HS Agent respondeu com status ${response.status}.`);
   const payload = (await response.json()) as HermesResponse;
   const parsed = extractJson(extractText(payload));
   return hermesAnalysisSchema.parse(parsed);
@@ -78,10 +78,10 @@ export async function chatWithHermes(message: string) {
       model: "hermes-agent",
       store: false,
       instructions: [
-        "Você é o assistente interno de prospecção da HS Representações.",
-        "Use a integração Apollo disponível para pesquisar novos leads de acordo com o pedido do usuário.",
-        "Responda em português, de forma direta, com os leads e dados que o Apollo retornar.",
-        "Se não houver resultados ou a integração Apollo não estiver disponível, diga isso claramente.",
+        "Você é o HS Agent, assistente interno de prospecção da HS Representações.",
+        "Use as ferramentas de prospecção disponíveis para pesquisar novos leads de acordo com o pedido do usuário.",
+        "Responda em português, de forma direta, com os leads e dados retornados pelas ferramentas.",
+        "Se não houver resultados ou as ferramentas de prospecção não estiverem disponíveis, diga isso claramente.",
         "Nunca invente dados, nem sugira aprovação de crédito, taxas ou prazos.",
       ].join(" "),
       input: JSON.stringify({ pedidoDeProspeccao: message }),
@@ -89,10 +89,10 @@ export async function chatWithHermes(message: string) {
     signal: AbortSignal.timeout(25_000),
   });
   if (response.redirected || !response.headers.get("content-type")?.includes("application/json")) {
-    throw new Error("Hermes redirecionou para login. Configure uma credencial de API válida no servidor Hermes.");
+    throw new Error("HS Agent redirecionou para login. Configure uma credencial de API válida no servidor.");
   }
-  if (!response.ok) throw new Error(`Hermes respondeu com status ${response.status}.`);
+  if (!response.ok) throw new Error(`HS Agent respondeu com status ${response.status}.`);
   const answer = extractText((await response.json()) as HermesResponse).trim();
-  if (!answer) throw new Error("Hermes não retornou uma resposta.");
+  if (!answer) throw new Error("HS Agent não retornou uma resposta.");
   return answer;
 }

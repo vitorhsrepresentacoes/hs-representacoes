@@ -12,6 +12,6 @@ export async function POST(request: Request) {
     const answer = await chatWithHermes(message);
     return NextResponse.json({ answer });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Não foi possível consultar o Hermes." }, { status: 400 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Não foi possível consultar o HS Agent." }, { status: 400 });
   }
 }

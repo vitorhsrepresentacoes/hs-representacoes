@@ -9,6 +9,6 @@ export async function POST(_: Request, context: { params: Promise<{ id: string }
     const lead = await analyzeLeadWithHermesOnly(id);
     return NextResponse.json({ analysis: { priority: lead.analysisPriority, summary: lead.analysisSummary, missingData: lead.analysisMissingData } });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Não foi possível consultar o Hermes." }, { status: 400 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Não foi possível consultar o HS Agent." }, { status: 400 });
   }
 }
