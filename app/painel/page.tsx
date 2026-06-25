@@ -36,6 +36,48 @@ function priorityLabel(priority: Lead["analysisPriority"]) {
   return priority ? `Prioridade ${priority}` : "Sem prioridade";
 }
 
+const sidebarItems = [
+  { label: "Visão geral", href: "#visao-geral" },
+  { label: "CRM HS", href: "#crm-hs" },
+  { label: "Automações", href: "#automacoes" },
+  { label: "Integrações", href: "#integracoes" },
+  { label: "HS Agent", href: "#hs-agent" },
+  { label: "Chat equipe", href: "#chat-equipe" },
+];
+
+const automationCards = [
+  {
+    title: "Aniversário do lead",
+    trigger: "Todo dia às 09h",
+    action: "HS Agent prepara uma mensagem personalizada e cria tarefa de envio no CRM.",
+    status: "Modelo",
+  },
+  {
+    title: "Follow-up sem resposta",
+    trigger: "48h sem retorno",
+    action: "Reescreve a abordagem pelo contexto do lead e sinaliza prioridade para a equipe.",
+    status: "Pronto",
+  },
+  {
+    title: "Aluguel para imóvel próprio",
+    trigger: "Lead B2C em Sorocaba",
+    action: "Segmenta quem paga aluguel, resume intenção de compra e sugere próxima conversa.",
+    status: "B2C",
+  },
+  {
+    title: "Resumo diário",
+    trigger: "Fim do expediente",
+    action: "Envia um resumo com novos leads, pendências, oportunidades quentes e falhas de integração.",
+    status: "Workspace",
+  },
+];
+
+const teamMessages = [
+  { name: "Comercial", time: "09:12", text: "Priorizar leads de financiamento imobiliário com prazo menor que 6 meses." },
+  { name: "HS Agent", time: "09:16", text: "Detectei oportunidade B2C: aluguel alto + intenção de compra em Sorocaba." },
+  { name: "Operação", time: "09:20", text: "Separar contatos com CRM pendente para revisão antes do disparo." },
+];
+
 export default async function Dashboard() {
   const session = await requireAdmin();
   const dashboard = await postgresLeadRepository.dashboard();
@@ -46,34 +88,99 @@ export default async function Dashboard() {
   );
 
   return (
-    <main className="dashboard">
-      <header className="dashboard-header">
-        <div>
-          <p className="eyebrow">OPERAÇÃO COMERCIAL</p>
-          <h1>Painel HS</h1>
-          <p>Olá, {session.email}.</p>
+    <main className="dashboard-shell">
+      <aside className="dashboard-sidebar" aria-label="Navegação do painel">
+        <a className="sidebar-brand" href="#visao-geral">
+          <img src="/assets/logo.svg" alt="" width="34" height="34" />
+          <span>HS OS</span>
+        </a>
+        <nav className="sidebar-nav">
+          {sidebarItems.map((item) => (
+            <a key={item.href} href={item.href}>{item.label}</a>
+          ))}
+        </nav>
+        <div className="sidebar-agent">
+          <span>HS Agent</span>
+          <strong>Operação B2C ativa</strong>
+          <p>Prospecção, follow-up e análise comercial conectadas ao painel.</p>
         </div>
         <form action="/api/auth/logout" method="post">
-          <button className="logout" type="submit">Sair</button>
+          <button className="logout sidebar-logout" type="submit">Sair</button>
         </form>
-      </header>
+      </aside>
 
-      <section className="metrics">
-        <article>
-          <span>Total de leads</span>
-          <strong>{dashboard.totalLeads}</strong>
-        </article>
-        <article>
-          <span>Novos hoje</span>
-          <strong>{dashboard.leadsToday}</strong>
-        </article>
-        <article>
-          <span>Qualificados pela IA</span>
-          <strong>{dashboard.qualifiedLeads}</strong>
-        </article>
-      </section>
+      <section className="dashboard" id="visao-geral">
+        <header className="dashboard-header">
+          <div>
+            <p className="eyebrow">OPERAÇÃO COMERCIAL</p>
+            <h1>Painel HS</h1>
+            <p>Olá, {session.email}.</p>
+          </div>
+          <a className="logout" href="/">Ver site</a>
+        </header>
 
-      <section className="crm-board-section">
+        <section className="metrics">
+          <article>
+            <span>Total de leads</span>
+            <strong>{dashboard.totalLeads}</strong>
+          </article>
+          <article>
+            <span>Novos hoje</span>
+            <strong>{dashboard.leadsToday}</strong>
+          </article>
+          <article>
+            <span>Qualificados pela IA</span>
+            <strong>{dashboard.qualifiedLeads}</strong>
+          </article>
+        </section>
+
+        <section className="ops-grid">
+          <article className="automation-panel" id="automacoes">
+            <div className="table-heading">
+              <div>
+                <p className="eyebrow">AUTOMAÇÕES</p>
+                <h2>Rotinas do HS Agent</h2>
+              </div>
+              <span className="integration-status integration-status-external">Prontas para ativar</span>
+            </div>
+            <div className="automation-list">
+              {automationCards.map((automation) => (
+                <div className="automation-card" key={automation.title}>
+                  <div>
+                    <strong>{automation.title}</strong>
+                    <small>{automation.trigger}</small>
+                  </div>
+                  <p>{automation.action}</p>
+                  <span>{automation.status}</span>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article className="team-chat-panel" id="chat-equipe">
+            <div className="table-heading">
+              <div>
+                <p className="eyebrow">EQUIPE</p>
+                <h2>Chat interno</h2>
+              </div>
+              <span className="chat-state">Visual</span>
+            </div>
+            <div className="team-chat-list">
+              {teamMessages.map((message) => (
+                <div className="team-message" key={`${message.name}-${message.time}`}>
+                  <div><strong>{message.name}</strong><span>{message.time}</span></div>
+                  <p>{message.text}</p>
+                </div>
+              ))}
+            </div>
+            <div className="team-chat-compose" aria-hidden="true">
+              <span>Escrever mensagem para a equipe</span>
+              <button type="button" disabled>Enviar</button>
+            </div>
+          </article>
+        </section>
+
+      <section className="crm-board-section" id="crm-hs">
         <div className="table-heading">
           <div>
             <p className="eyebrow">CRM HS</p>
@@ -119,7 +226,7 @@ export default async function Dashboard() {
         </div>
       </section>
 
-      <section className="integration-panel">
+      <section className="integration-panel" id="integracoes">
         <div>
           <p className="eyebrow">CRM E INTEGRAÇÕES</p>
           <h2>Operação conectada</h2>
@@ -137,7 +244,9 @@ export default async function Dashboard() {
         </div>
       </section>
 
-      <HermesLeadChat />
+      <div id="hs-agent">
+        <HermesLeadChat />
+      </div>
 
       <section className="lead-table-section">
         <div className="table-heading">
@@ -178,6 +287,7 @@ export default async function Dashboard() {
             </tbody>
           </table>
         </div>
+      </section>
       </section>
     </main>
   );
